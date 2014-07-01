@@ -2,7 +2,7 @@
 /**
  * @fileOverview Add the ability to fire signals on your objects. Signals are events, but hard coded into the object
  * and don't rely on strings like other events and `eventables`
- * @module mixins/signalable
+ * @module events/signalable
  * @requires base
  * @requires signals
  * @requires async
@@ -21,7 +21,7 @@ var async = require( "async" );
  * @property {array=} params Default parameters passed to listener during `Signal.raise`/`Signal.fire`/`Signal.trigger` and SignalBinding.execute. (curried parameters). Defaults to `null`
  * @property {object=} context When provided the signal will be raised in the context of this object. Defaults to `this` - the signal host
  * @name SignalOptions
- * @memberOf module:mixins/signalable
+ * @memberOf module:events/signalable
  * @example
  *
  *  signals:{
@@ -50,10 +50,10 @@ var async = require( "async" );
  * @constructor
  * @param {?object} host If hosted, you can identify the host here.
  * @param {?string} name The name of the signal
- * @type module:mixins/signalable.SignalOptions
+ * @type module:events/signalable.SignalOptions
  */
-var Signal = Base.compose( [Base, signals.Signal], /** @lends module:mixins/signalable~Signal# */{
-	declaredClass : "mixins/Signal",
+var Signal = Base.compose( [Base, signals.Signal], /** @lends module:events/signalable~Signal# */{
+	declaredClass : "events/Signal",
 
 	constructor : function ( host, name, options ) {
 		this.options = options = options || {};
@@ -230,12 +230,12 @@ var Signal = Base.compose( [Base, signals.Signal], /** @lends module:mixins/sign
 
 /**
  * @classDesc Make an object capable of handling a signal. Or many signals.
- * @exports mixins/signalable
+ * @exports events/signalable
  * @mixin
  * @extends base
  */
-var Signalable = Base.compose( [Base], /** @lends mixins/signalable# */{
-	declaredClass : "mixins/Signalable",
+var Signalable = Base.compose( [Base], /** @lends events/signalable# */{
+	declaredClass : "events/Signalable",
 
 	constructor : function () {
 		this.autoLoadSignals = this.autoLoadSignals || true;
@@ -350,7 +350,7 @@ Signalable.mixin = Base.mixin;
 
 /**
  * When true, the class will load the `signals` hash and create the signal definitions during construction
- * @memberOf mixins/signalable#
+ * @memberOf events/signalable#
  * @name autoLoadSignals
  * @type boolean
  */
@@ -360,7 +360,7 @@ Signalable.mixin = Base.mixin;
  * A hash of signals to create automatically. Each definition consists of a name for the signal as the key
  * and then a hash of options (nullable) for each signal
  * @type {hash|function():hash}
- * @memberOf mixins/signalable#
+ * @memberOf events/signalable#
  * @name signals
  * @type module:mixins/signalable.SignalOptions
  */

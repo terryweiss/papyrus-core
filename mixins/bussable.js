@@ -1,7 +1,7 @@
 "use strict";
 /**
  * @fileOverview Provides easy access to the system bus and provides some helper methods for doing so
- * @module mixins/bussable
+ * @module events/bussable
  * @requires postal
  * @requires lodash
  * @requires base
@@ -12,11 +12,11 @@ var sys = require( "lodash" );
 
 /**
  *  @classDesc Provides easy access to the system bus and provides some helper methods for doing so
- *  @exports mixins/bussable
+ *  @exports events/bussable
  *  @mixin
  */
-var Bussable = Base.compose( [Base], /** @lends mixins/bussable# */{
-	declaredClass : "mixins/Bussable",
+var Bussable = Base.compose( [Base], /** @lends events/bussable# */{
+	declaredClass : "events/Bussable",
 	constructor   : function () {
 		/**
 		 * The list of subscriptions maintained by the mixin

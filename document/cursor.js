@@ -6,7 +6,7 @@
 
 var Base = require( "../base" );
 var sys = require( "lodash" );
-var Signalable = require( "p/mixins/signalable" );
+var Signalable = require( "../events/signalable" );
 
 var Cursor = Base.compose( [Base], {
 	toCursor : function ( tracked ) {
