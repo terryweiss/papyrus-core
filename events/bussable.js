@@ -21,7 +21,7 @@ var Bussable = Base.compose( [Base], /** @lends events/bussable# */{
 		/**
 		 * The list of subscriptions maintained by the mixin
 		 * @type {Array}
-		 * @memberof mixins/bussable#
+		 * @memberof eventsevents/bussable#
 		 * @name _subscriptions
 		 * @private
 		 */
