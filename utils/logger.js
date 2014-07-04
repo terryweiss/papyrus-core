@@ -3,11 +3,12 @@
  * @fileOverview The logging system for papyrus is based on [http://pimterry.github.io/loglevel/](loglevel) and slightly decorated
  * @module utils/logger
  * @requires dcl
- * @requires loglevel
+ *
  */
 
 var dcl = require( "dcl" );
-var log = require( "js-logger" );
+var sys = require( "lodash" );
+var logger = require( "log4js" );
 /**
  * A logger class that you can mix into your classes to handle logging settings and state at an object level.
  * See {@link utils/logger} for the members of this class
@@ -18,8 +19,27 @@ var log = require( "js-logger" );
  */
 var Logger = dcl( null, /** @lends  utils/logger.Logger# */{
 	declaredClass : "utils/Logger",
-	constructor   : function () {
-		log.useDefaults();
+
+	constructor : function ( p1, p2 ) {
+		if ( sys.isString( p1 ) ) {
+			this.logger = logger.getLogger( p1 );
+		} else if ( sys.isObject( p1 ) ) {
+			this.config = p1;
+		}
+		if ( sys.isObject( p2 ) ) {
+			this.config = p2;
+		}
+		if ( !this.logger ) {
+			this.logger = logger.getLogger( "papyrus" );
+		}
+
+		if ( sys.isObject( this.config ) ) {
+			logger.configure( this.config );
+		}
+
+		sys.each( ['trace', 'debug', 'info', 'warn', 'error', 'fatal'], function ( item ) {
+			this[item] = this.logger[item];
+		}, this );
 	},
 
 	/**
@@ -28,16 +48,14 @@ var Logger = dcl( null, /** @lends  utils/logger.Logger# */{
 	 *
 	 */
 	silent : function () {
-//		log.disableAll();
-		log.setLevel( log.OFF );
+		this.logger.setLevel( logger.levels.OFF );
 	},
 	/**
 	 * Turns on all logging levels
 	 *
 	 */
 	all    : function () {
-//		log.enableAll();
-		log.setLevel( log.DEBUG );
+		this.logger.setLevel( logger.levels.ALL );
 	},
 	/**
 	 * Sets the logging level to one of `trace`, `debug`, `info`, `warn`, `error`.
@@ -48,39 +66,10 @@ var Logger = dcl( null, /** @lends  utils/logger.Logger# */{
 		if ( lvl.toLowerCase() === "none" ) {
 			this.disableAll();
 		} else {
-			log.setLevel( lvl );
+			this.logger.setLevel( lvl );
 		}
-	},
-	/**
-	 * Log a `trace` call
-	 * @method
-	 * @param {string} The value to log
-	 */
-	trace  : log.debug,
-	/**
-	 * Log a `debug` call
-	 * @method
-	 * @param {string} The value to log
-	 */
-	debug  : log.debug,
-	/**
-	 * Log a `info` call
-	 * @method
-	 * @param {string} The value to log
-	 */
-	info   : log.info,
-	/**
-	 * Log a `warn` call
-	 * @method
-	 * @param {string} The value to log
-	 */
-	warn   : log.warn,
-	/**
-	 * Log a `error` call
-	 * @method
-	 * @param {string} The value to log
-	 */
-	error  : log.error
+	}
+
 } );
 
 module.exports = new Logger();
