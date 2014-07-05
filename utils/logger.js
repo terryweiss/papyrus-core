@@ -38,7 +38,7 @@ var Logger = dcl( null, /** @lends  utils/logger.Logger# */{
 		}
 
 		sys.each( ['trace', 'debug', 'info', 'warn', 'error', 'fatal'], function ( item ) {
-			this[item] = this.logger[item];
+			this[item] = sys.bind(this.logger,this.logger[item]);
 		}, this );
 	},
 
