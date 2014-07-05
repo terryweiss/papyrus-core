@@ -1,6 +1,6 @@
 {
   "name": "papyrus-core",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "The core components of Papyrus that are shared between the web and server.",
   "main": "index.js",
   "repository": {
