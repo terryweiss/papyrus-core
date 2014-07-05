@@ -38,7 +38,7 @@ var Logger = dcl( null, /** @lends  utils/logger.Logger# */{
 		}
 
 		sys.each( ['trace', 'debug', 'info', 'warn', 'error', 'fatal'], function ( item ) {
-			this[item] = sys.bind(this.logger[item], this.logger);
+			this[item] = sys.bind( this.logger[item], this.logger );
 		}, this );
 	},
 
@@ -80,3 +80,6 @@ module.exports = new Logger();
  * @type {utils/logger.Logger}
  */
 module.exports.Logger = Logger;
+module.exports.getLogger = function ( p1, p2 ) {
+	return new Logger( p1, p2 );
+};

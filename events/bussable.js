@@ -9,6 +9,7 @@
 var bus = require( "postal" );
 var Base = require( "../base/index" );
 var sys = require( "lodash" );
+var logger = require( "../utils/logger" );
 
 /**
  *  @classDesc Provides easy access to the system bus and provides some helper methods for doing so
@@ -27,7 +28,7 @@ var Bussable = Base.compose( [Base], /** @lends events/bussable# */{
 		 */
 		this._subscriptions = {};
 
-		this.log.trace( "Bussable constructor" );
+		logger.trace( "Bussable constructor" );
 	},
 
 	/**
@@ -38,7 +39,7 @@ var Bussable = Base.compose( [Base], /** @lends events/bussable# */{
 	 * @returns {object} The subscription definition
 	 */
 	subscribe : function ( channel, topic, callback ) {
-		this.log.trace( "Bussable subscribe" );
+		logger.trace( "Bussable subscribe" );
 		var sub = bus.subscribe( {channel : channel, topic : topic, callback : callback} );
 		this.subscriptions[channel + "." + topic] = sub;
 		return sub;
@@ -52,7 +53,7 @@ var Bussable = Base.compose( [Base], /** @lends events/bussable# */{
 	 * @returns {object} The subscription definition
 	 */
 	once : function ( channel, topic, callback ) {
-		this.log.trace( "Bussable once" );
+		logger.trace( "Bussable once" );
 		var sub = this.subscribe( channel, topic, callback );
 		this.subscriptions[channel + "." + topic] = sub;
 		sub.disposeAfter( 1 );
@@ -66,7 +67,7 @@ var Bussable = Base.compose( [Base], /** @lends events/bussable# */{
 	 * @param {object=} options What to pass to the event
 	 */
 	publish : function ( channel, topic, options ) {
-		this.log.trace( "Bussable publish" );
+		logger.trace( "Bussable publish" );
 		bus.publish( {channel : channel, topic : topic, data : options} );
 	},
 
@@ -78,7 +79,7 @@ var Bussable = Base.compose( [Base], /** @lends events/bussable# */{
 	 * @returns {object=} The subscription definition
 	 */
 	getSubscription : function ( channel, topic ) {
-		this.log.trace( "Bussable getSubscription" );
+		logger.trace( "Bussable getSubscription" );
 		return this.subscriptions[channel + "." + topic];
 	},
 
@@ -87,7 +88,7 @@ var Bussable = Base.compose( [Base], /** @lends events/bussable# */{
 	 * @private
 	 */
 	destroy : function () {
-		this.log.trace( "Bussable destroy" );
+		logger.trace( "Bussable destroy" );
 
 		sys.each( this.subscriptions, function ( sub ) {
 			sub.unsubscribe();
