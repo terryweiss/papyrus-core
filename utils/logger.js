@@ -113,7 +113,7 @@ var BrowserLog = dcl( [Log], {
 			appenders : []
 		} );
 
-		this.getRootLogger.setLevel( options.logLevel );
+		this.getRootLogger().setLevel( options.logLevel );
 
 		sys.each( options.appenders, function ( apDef ) {
 			var appender = new this.log[apDef.type]();
