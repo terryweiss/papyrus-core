@@ -11,7 +11,7 @@ var sys = require( "lodash" );
 
 var Log = dcl( null, {
 	_captureLogMethod : function ( name ) {
-		this[name] = this.Log[name];
+		this[name] = this.log[name];
 	}
 } );
 
@@ -76,9 +76,9 @@ var ServerLog = dcl( [Log], {
 
 var BrowserLog = dcl( [Log], {
 	constructor    : function () {
-		var moduleName = "log4javascript";
+//		var moduleName = "log4javascript";
 
-		this.log = require( moduleName );
+//		this.log = require( moduleName );
 		this.log = log4javascript;
 		this.levels = this.log.Level;
 		this._captureLogMethod( "getDefaultLogger" );
@@ -91,13 +91,13 @@ var BrowserLog = dcl( [Log], {
 		return this.log.getLogger( name );
 	},
 	addAppender    : function ( appender ) {
-		this.getRootLogger.addAppender( appender );
+		this.getRootLogger().addAppender( appender );
 	},
 	removeAppender : function ( appender ) {
-		this.getRootLogger.removeAppender( appender );
+		this.getRootLogger().removeAppender( appender );
 	},
 	clearAppenders : function () {
-		this.getRootLogger.removeAllAppenders();
+		this.getRootLogger().removeAllAppenders();
 	},
 	disable        : function () {
 		this.log.setEnable( false );
