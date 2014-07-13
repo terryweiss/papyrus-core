@@ -1,19 +1,26 @@
 module.exports = function ( grunt ) {
-	grunt.loadNpmTasks('grunt-shell');
+	grunt.loadNpmTasks( 'grunt-shell' );
 	grunt.initConfig( {
 
 		shell : {
-			release : {
+			release1 : {
 				command : [
-					'git add . ; git commit -m "ready for release";npm version patch',
+					"touch Gruntfile.js",
+					"git add .",
+					'git commit -m "ready for release"'
+				].join( ";" )
+
+			},
+			release2 : {
+				command : ["npm version patch",
 					"git push",
 					"git push --tags",
 					"npm publish"
-				].join("&&")
+				].join( "&&" )
 			}
 		}
 
 	} );
 
-	grunt.registerTask( 'release', ['shell:release'] );
+	grunt.registerTask( 'release', ['shell:release1', 'shell:release2'] );
 };
