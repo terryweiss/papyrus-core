@@ -1,44 +1,45 @@
 {
-  "name": "papyrus-core",
-  "version": "0.1.8",
-  "description": "The core components of Papyrus that are shared between the web and server.",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/terryweiss/papyrus-core"
-  },
-  "keywords": [
-    "framework",
-    "library"
-  ],
-  "author": {
-    "name": "Terry Weiss",
-    "email": "terry.weiss@gmail.com",
-    "url": "https://github.com/terryweiss"
-  },
-  "engines": [
-    "node",
-    "web"
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/terryweiss/papyrus-core/issues"
-  },
-  "homepage": "https://github.com/terryweiss/papyrus-core",
-  "dependencies": {
-    "accounting": "^0.3.2",
-    "async": "^0.9.0",
-    "dcl": "^1.1.1",
-    "jjv": "^1.0.0",
-    "lodash": "~2.4.0",
-    "log4js": "^0.6.15",
-    "postal": "~0.8.9",
-    "promise": "^5.0.0",
-    "signals": "~1.0.0",
-    "sprintf-js": "0.0.7"
-  },
-  "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-shell": "^0.7.0"
-  }
+	"name"            : "papyrus-core",
+	"version"         : "0.1.8",
+	"description"     : "The core components of Papyrus that are shared between the web and server.",
+	"main"            : "index.js",
+	"repository"      : {
+		"type" : "git",
+		"url"  : "git://github.com/terryweiss/papyrus-core"
+	},
+	"keywords"        : [
+		"framework",
+		"library"
+	],
+	"author"          : {
+		"name"  : "Terry Weiss",
+		"email" : "terry.weiss@gmail.com",
+		"url"   : "https://github.com/terryweiss"
+	},
+	"engines"         : [
+		"node",
+		"web"
+	],
+	"license"         : "MIT",
+	"bugs"            : {
+		"url" : "https://github.com/terryweiss/papyrus-core/issues"
+	},
+	"homepage"        : "https://github.com/terryweiss/papyrus-core",
+	"dependencies"    : {
+		"accounting"     : "^0.3.2",
+		"async"          : "^0.9.0",
+		"dcl"            : "^1.1.1",
+		"jjv"            : "^1.0.0",
+		"lodash"         : "~2.4.0",
+		"log4js"         : "^0.6.15",
+		"postal"         : "~0.8.9",
+		"promise"        : "^5.0.0",
+		"signals"        : "~1.0.0",
+		"sprintf-js"     : "0.0.7",
+		"log4javascript" : "git://github.com/DECK36/log4javascript"
+	},
+	"devDependencies" : {
+		"grunt"       : "^0.4.5",
+		"grunt-shell" : "^0.7.0"
+	}
 }
