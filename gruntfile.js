@@ -5,7 +5,7 @@ module.exports = function ( grunt ) {
 		shell : {
 			release : {
 				command : [
-					'git add .;git commit -m "ready for release";npm version patch',
+					'git add . ; git commit -m "ready for release";npm version patch',
 					"git push",
 					"git push --tags",
 					"npm publish"
