@@ -8,78 +8,126 @@
 
 var dcl = require( "dcl" );
 var sys = require( "lodash" );
-var logger = require( "log4js" );
-/**
- * A logger class that you can mix into your classes to handle logging settings and state at an object level.
- * See {@link utils/logger} for the members of this class
- *
- * @exports utils/logger.Logger
- * @class
- * @see utils/logger
- */
-var Logger = dcl( null, /** @lends  utils/logger.Logger# */{
-	declaredClass : "utils/Logger",
 
-	constructor : function ( p1, p2 ) {
-		if ( sys.isString( p1 ) ) {
-			this.logger = logger.getLogger( p1 );
-		} else if ( sys.isObject( p1 ) ) {
-			this.config = p1;
-		}
-		if ( sys.isObject( p2 ) ) {
-			this.config = p2;
-		}
-		if ( !this.logger ) {
-			this.logger = logger.getLogger( "papyrus" );
-		}
-
-		if ( sys.isObject( this.config ) ) {
-			logger.configure( this.config );
-		}
-
-		sys.each( ['trace', 'debug', 'info', 'warn', 'error', 'fatal'], function ( item ) {
-			this[item] = sys.bind( this.logger[item], this.logger );
-		}, this );
-	},
-
-	/**
-	 * Turn off all logging. If you log something, it will not error, but will not do anything either
-	 * and the cycles are minimal.
-	 *
-	 */
-	silent : function () {
-		this.logger.setLevel( logger.levels.OFF );
-	},
-	/**
-	 * Turns on all logging levels
-	 *
-	 */
-	all    : function () {
-		this.logger.setLevel( logger.levels.ALL );
-	},
-	/**
-	 * Sets the logging level to one of `trace`, `debug`, `info`, `warn`, `error`.
-	 * @param {string} lvl The level to set it to. Can be  one of `trace`, `debug`, `info`, `warn`, `error`.
-	 *
-	 */
-	level  : function ( lvl ) {
-		if ( lvl.toLowerCase() === "none" ) {
-			this.disableAll();
-		} else {
-			this.logger.setLevel( lvl );
-		}
+var Log = dcl( null, {
+	_captureLogMethod : function ( name ) {
+		this[name] = this.Log[name];
 	}
-
 } );
 
-module.exports = new Logger();
-/**
- * The system global, cross-platform logger
- * @name utils/logger
- * @static
- * @type {utils/logger.Logger}
- */
-module.exports.Logger = Logger;
-module.exports.getLogger = function ( p1, p2 ) {
-	return new Logger( p1, p2 );
-};
+var Level = dcl( null, {
+	constructor      : function ( level, name ) {
+		this.level = level;
+		this.name = name;
+	},
+	toString         : function () {
+		return this.name;
+	},
+	equals           : function ( level ) {
+		return this.level == level.level;
+	},
+	isGreaterOrEqual : function ( level ) {
+		return this.level >= level.level;
+	}
+} );
+
+Level.ALL = new Level( Number.MIN_VALUE, "ALL" );
+Level.TRACE = new Level( 10000, "TRACE" );
+Level.DEBUG = new Level( 20000, "DEBUG" );
+Level.INFO = new Level( 30000, "INFO" );
+Level.WARN = new Level( 40000, "WARN" );
+Level.ERROR = new Level( 50000, "ERROR" );
+Level.FATAL = new Level( 60000, "FATAL" );
+Level.OFF = new Level( Number.MAX_VALUE, "OFF" );
+
+var EmptyLogger = dcl( null, {
+	level       : Level.Off,
+	constructor : function () {
+		sys.each( ["trace", "debug", "info", "warn", "error", "fatal"], function ( item ) {
+			this[item] = sys.identity();
+		}, this );
+	}
+} );
+
+var ServerLog = dcl( [Log], {
+	constructor        : function () {
+		var moduleName = "log4js";
+		this.log = require( moduleName );
+		this.levels = this.log.levels;
+		this._captureLogMethod( "getDefaultLogger" );
+		this._captureLogMethod( "addAppender" );
+		this._captureLogMethod( "clearAppenders" );
+	},
+	getNullLogger      : function () {
+		return new EmptyLogger();
+	},
+	getRootLogger      : function () {
+		return new EmptyLogger();
+	},
+	getLogger          : function ( name ) {
+		name = name || "sys";
+		return this.log.getLogger( name );
+	},
+	disable            : function () {
+		this.log.shutdown( false );
+	},
+	resetConfiguration : sys.identity
+} );
+
+var BrowserLog = dcl( [Log], {
+	constructor    : function () {
+		var moduleName = "log4javascript";
+
+		this.log = require( moduleName );
+		this.log = log4javascript;
+		this.levels = this.log.Level;
+		this._captureLogMethod( "getDefaultLogger" );
+		this._captureLogMethod( "getNullLogger" );
+		this._captureLogMethod( "getRootLogger" );
+		this._captureLogMethod( "resetConfiguration" );
+	},
+	getLogger      : function ( name ) {
+		name = name || "sys";
+		return this.log.getLogger( name );
+	},
+	addAppender    : function ( appender ) {
+		this.getRootLogger.addAppender( appender );
+	},
+	removeAppender : function ( appender ) {
+		this.getRootLogger.removeAppender( appender );
+	},
+	clearAppenders : function () {
+		this.getRootLogger.removeAllAppenders();
+	},
+	disable        : function () {
+		this.log.setEnable( false );
+	},
+	enable         : function () {
+		this.log.setEnable( true );
+	},
+	configure      : function ( options ) {
+
+		options = options || {};
+		options = sys.defaults( options, {
+			logLevel  : this.levels.TRACE,
+			appenders : []
+		} );
+
+		this.getRootLogger.setLevel( options.logLevel );
+
+		sys.each( options.appenders, function ( apDef ) {
+			var appender = new this.log[apDef.type]();
+			this.addAppender( appender );
+		}, this );
+	}
+} );
+
+var instance;
+if ( window ) {
+	instance = new BrowserLog();
+} else {
+	instance = new ServerLog();
+}
+
+module.exports = instance;
+

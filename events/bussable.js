@@ -97,3 +97,4 @@ var Bussable = Base.compose( [Base], /** @lends events/bussable# */{
 } );
 
 module.exports = Bussable;
+module.exports.bus = bus;
