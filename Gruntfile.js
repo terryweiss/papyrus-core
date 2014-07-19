@@ -17,6 +17,9 @@ module.exports = function ( grunt ) {
 					"git push --tags",
 					"npm publish"
 				].join( "&&" )
+			},
+			docs:{
+				command: "jsdoc -c jsdoc.conf.json"
 			}
 		}
 

@@ -2,12 +2,17 @@
 
 /**
  * @fileOverview Allows a collection to function as a cursor with movement
+ * @module document/cursor
  */
 
 var Base = require( "../base" );
 var sys = require( "lodash" );
 var Signalable = require( "../events/signalable" );
-
+/**
+ * Cursor
+ * @class
+ * @mixes module:events/signalable
+ */
 var Cursor = Base.compose( [Base], {
 	toCursor : function ( tracked ) {
 

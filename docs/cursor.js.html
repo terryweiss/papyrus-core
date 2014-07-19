@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>DocStrap Source: document/cursor.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
+
+</head>
+
+<body>
+<div class="container-fluid">
+	<div class="navbar navbar-fixed-top navbar-inverse">
+		<div class="navbar-inner">
+			<a class="brand" href="index.html">DocStrap</a>
+			<ul class="nav">
+				
+				<li class="dropdown">
+					<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="module-base.html">base</a>
+						</li>
+						
+						<li>
+							<a href="chains_.html">base/chains</a>
+						</li>
+						
+						<li>
+							<a href="binder.html">document/binder</a>
+						</li>
+						
+						<li>
+							<a href="collector.html">document/collector</a>
+						</li>
+						
+						<li>
+							<a href="cursor.html">document/cursor</a>
+						</li>
+						
+						<li>
+							<a href="document__.html">document/document</a>
+						</li>
+						
+						<li>
+							<a href="probe.html">document/probe</a>
+						</li>
+						
+						<li>
+							<a href="schema__.html">document/schema</a>
+						</li>
+						
+						<li>
+							<a href="bussable_.html">events/bussable</a>
+						</li>
+						
+						<li>
+							<a href="signalable_.html">events/signalable</a>
+						</li>
+						
+						<li>
+							<a href="format.html">strings/format</a>
+						</li>
+						
+						<li>
+							<a href="construct.html">utils/construct</a>
+						</li>
+						
+						<li>
+							<a href="logger.html">utils/logger</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="base.html">base</a>
+						</li>
+						
+						<li>
+							<a href="chains.html">base/chains</a>
+						</li>
+						
+						<li>
+							<a href="document.html">document/document</a>
+						</li>
+						
+						<li>
+							<a href="collector-ACollector.html">document/collector~ACollector</a>
+						</li>
+						
+						<li>
+							<a href="collector-CollectorBase.html">document/collector~CollectorBase</a>
+						</li>
+						
+						<li>
+							<a href="collector-OCollector.html">document/collector~OCollector</a>
+						</li>
+						
+						<li>
+							<a href="cursor-Cursor.html">document/cursor~Cursor</a>
+						</li>
+						
+						<li>
+							<a href="probe.queryOperators.html">document/probe.queryOperators</a>
+						</li>
+						
+						<li>
+							<a href="probe.updateOperators.html">document/probe.updateOperators</a>
+						</li>
+						
+						<li>
+							<a href="signalable-Signal.html">events/signalable~Signal</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="mixins.list.html" class="dropdown-toggle" data-toggle="dropdown">Mixins<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="schema.html">document/schema</a>
+						</li>
+						
+						<li>
+							<a href="bussable.html">events/bussable</a>
+						</li>
+						
+						<li>
+							<a href="signalable.html">events/signalable</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+			</ul>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+
+		
+			<div class="span12">
+				
+				<div id="main">
+					
+
+
+		<h1 class="page-title">Source: document/cursor.js</h1>
+    
+<section>
+	<article>
+		<pre
+			class="sunlight-highlight-javascript linenums">"use strict";
+
+/**
+ * @fileOverview Allows a collection to function as a cursor with movement
+ * @module document/cursor
+ */
+
+var Base = require( "../base" );
+var sys = require( "lodash" );
+var Signalable = require( "../events/signalable" );
+/**
+ * Cursor
+ * @class
+ * @mixes module:events/signalable
+ */
+var Cursor = Base.compose( [Base], {
+	toCursor : function ( tracked ) {
+
+		if ( !tracked &amp;&amp; this._heap ) {
+			tracked = this._heap;
+		}
+
+		var currentIndex = 0;
+		var index;
+		var sortExpr;
+
+		var createIndex = function ( t ) {
+			index = [];
+			sys.each( t, function ( val, key ) {
+				index.push( {
+					val : val,
+					key : key
+				} );
+			} );
+		};
+
+		var sortBy = function ( f ) {
+			var sorted = sys.sortBy( tracked, f );
+			createIndex( sorted );
+
+		};
+
+		createIndex( tracked );
+		var length = index.length;
+
+		var checkIndex = function () {
+			if ( sys.size( tracked ) !== index.length ) {
+				if ( sortExpr ) {
+					sortBy( sortExpr );
+				} else {
+					createIndex( tracked );
+				}
+			}
+		};
+		var payload = {
+			sortBy       : function ( f ) {
+				sortExpr = f;
+				sortBy( f );
+				currentIndex = 0;
+				return this;
+			},
+			reindex      : function () {
+				createIndex( tracked );
+				currentIndex = 0;
+			},
+			next         : function () {
+				checkIndex();
+				if ( currentIndex >= (length - 1) ) {
+					return null;
+				} else {
+					currentIndex++;
+					if ( payload.isLast() ) {
+						payload.reachedLast.fire();
+					}
+					return index[currentIndex];
+				}
+			},
+			prev         : function () {
+				checkIndex();
+				if ( (currentIndex - 1) &lt; 0 ) {
+					return null;
+				} else {
+					currentIndex--;
+					if ( payload.isFirst() ) {
+						payload.reachedFirst.fire();
+					}
+					return index[currentIndex];
+				}
+			},
+			first        : function ( move ) {
+				checkIndex();
+				if ( move ) {
+					currentIndex = 0;
+				}
+				return index[0];
+			},
+			last         : function ( move ) {
+				checkIndex();
+				if ( move ) {
+					currentIndex = length - 1;
+				}
+				return index[length - 1];
+			},
+			length       : function () {
+				checkIndex();
+				return length;
+			},
+			currentIndex : function () {
+				checkIndex();
+				return currentIndex;
+			},
+			setIndex     : function ( val ) {
+				checkIndex();
+				if ( val >= 0 &amp;&amp; val &lt;= (length - 1) ) {
+					currentIndex = val;
+				}
+				return currentIndex;
+			},
+			isFirst      : function () {
+				return currentIndex === 0;
+			},
+			isLast       : function () {
+				return currentIndex >= (index.length - 1);
+			}
+
+		};
+		Base.mixin( payload, new Signalable() );
+		payload._addSignals( {
+			reachedFirst : null,
+			reachedLast  : null
+		} );
+
+		return payload;
+	}
+} );
+module.exports = Cursor;
+</pre>
+	</article>
+</section>
+
+
+
+
+
+				</div>
+
+				<div class="clearfix"></div>
+				<footer>
+					
+					
+		<span class="copyright">
+		DocStrap Copyright © 2012-2014 The contributors to the JSDoc3 and DocStrap projects.
+		</span>
+					<br />
+					
+		<span class="jsdoc-message">
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a>
+		on Fri Jul 18th 2014 using the <a
+			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		</span>
+				</footer>
+			</div>
+
+			
+			<br clear="both">
+		</div>
+
+	</div>
+	<!--<script src="scripts/sunlight.js"></script>-->
+	<script src="scripts/docstrap.lib.js"></script>
+	<script src="scripts/bootstrap-dropdown.js"></script>
+	<script src="scripts/toc.js"></script>
+
+	<script>
+		$( function () {
+			$( "[id*='$']" ).each( function () {
+				var $this = $( this );
+
+				$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+			} );
+
+			$( "#toc" ).toc( {
+				anchorName  : function ( i, heading, prefix ) {
+					return $( heading ).attr( "id" ) || ( prefix + i );
+				},
+				selectors   : "h1,h2,h3,h4",
+				showAndHide : false,
+				scrollTo    : "100px"
+			} );
+
+			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+			$( '.dropdown-toggle' ).dropdown();
+//			$( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+			$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+				var $this = $( this );
+
+				var example = $this.find( "code" );
+				exampleText = example.html();
+				var lang = /{@lang (.*?)}/.exec( exampleText );
+				if ( lang && lang[1] ) {
+					exampleText = exampleText.replace( lang[0], "" );
+					example.html( exampleText );
+					lang = lang[1];
+				} else {
+					lang = "javascript";
+				}
+
+				if ( lang ) {
+
+					$this
+						.addClass( "sunlight-highlight-" + lang )
+						.addClass( "linenums" )
+						.html( example.html() );
+
+				}
+			} );
+
+			Sunlight.highlightAll( {
+				lineNumbers : true,
+				showMenu : true,
+				enableDoclinks : true
+			} );
+		} );
+	 </script>
+
+
+
+	<!--Navigation and Symbol Display-->
+	
+
+
+	<!--Google Analytics-->
+	
+
+</body>
+</html>

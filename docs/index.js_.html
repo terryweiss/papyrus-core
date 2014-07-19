@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>DocStrap Source: document/index.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
+
+</head>
+
+<body>
+<div class="container-fluid">
+	<div class="navbar navbar-fixed-top navbar-inverse">
+		<div class="navbar-inner">
+			<a class="brand" href="index.html">DocStrap</a>
+			<ul class="nav">
+				
+				<li class="dropdown">
+					<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="module-base.html">base</a>
+						</li>
+						
+						<li>
+							<a href="chains_.html">base/chains</a>
+						</li>
+						
+						<li>
+							<a href="binder.html">document/binder</a>
+						</li>
+						
+						<li>
+							<a href="collector.html">document/collector</a>
+						</li>
+						
+						<li>
+							<a href="cursor.html">document/cursor</a>
+						</li>
+						
+						<li>
+							<a href="document__.html">document/document</a>
+						</li>
+						
+						<li>
+							<a href="probe.html">document/probe</a>
+						</li>
+						
+						<li>
+							<a href="schema__.html">document/schema</a>
+						</li>
+						
+						<li>
+							<a href="bussable_.html">events/bussable</a>
+						</li>
+						
+						<li>
+							<a href="signalable_.html">events/signalable</a>
+						</li>
+						
+						<li>
+							<a href="format.html">strings/format</a>
+						</li>
+						
+						<li>
+							<a href="construct.html">utils/construct</a>
+						</li>
+						
+						<li>
+							<a href="logger.html">utils/logger</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="base.html">base</a>
+						</li>
+						
+						<li>
+							<a href="chains.html">base/chains</a>
+						</li>
+						
+						<li>
+							<a href="document.html">document/document</a>
+						</li>
+						
+						<li>
+							<a href="collector-ACollector.html">document/collector~ACollector</a>
+						</li>
+						
+						<li>
+							<a href="collector-CollectorBase.html">document/collector~CollectorBase</a>
+						</li>
+						
+						<li>
+							<a href="collector-OCollector.html">document/collector~OCollector</a>
+						</li>
+						
+						<li>
+							<a href="cursor-Cursor.html">document/cursor~Cursor</a>
+						</li>
+						
+						<li>
+							<a href="probe.queryOperators.html">document/probe.queryOperators</a>
+						</li>
+						
+						<li>
+							<a href="probe.updateOperators.html">document/probe.updateOperators</a>
+						</li>
+						
+						<li>
+							<a href="signalable-Signal.html">events/signalable~Signal</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="mixins.list.html" class="dropdown-toggle" data-toggle="dropdown">Mixins<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="schema.html">document/schema</a>
+						</li>
+						
+						<li>
+							<a href="bussable.html">events/bussable</a>
+						</li>
+						
+						<li>
+							<a href="signalable.html">events/signalable</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+			</ul>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+
+		
+			<div class="span12">
+				
+				<div id="main">
+					
+
+
+		<h1 class="page-title">Source: document/index.js</h1>
+    
+<section>
+	<article>
+		<pre
+			class="sunlight-highlight-javascript linenums">"use strict";
+/**
+ * @fileOverview A document is the first level if usable data-bearing entity in the system. It does NOT include any verbs for saving or anything like
+ * that, it is a pure, in memory data container
+ * @module document/document
+ * @require base
+ * @require document/probe
+ * @require lodash
+ */
+
+var Base = require( "../base/index" );
+var probe = require( "./probe" );
+var sys = require( "lodash" );
+
+/**
+ * A document is the first level if usable data-bearing entity in the system. It does NOT include any verbs for saving or anything like
+ * that, it is a pure, in memory data container
+ * @exports document/document
+ * @constructor
+ * @borrows module:document/probe.get as get
+ * @borrows module:document/probe.set as set
+ * @borrows module:document/probe.any as any
+ * @borrows module:document/probe.all as all
+ * @borrows module:document/probe.remove as remove
+ * @borrows module:document/probe.seekKey as seekKey
+ * @borrows module:document/probe.seek as seek
+ * @borrows module:document/probe.findOne as findOne
+ * @borrows module:document/probe.findOneKey as findOneKey
+ * @borrows module:document/probe.findKeys as findKeys
+ * @borrows module:document/probe.find as find
+ * @borrows module:document/probe.update as update
+ * @borrows module:document/probe.some as some
+ * @borrows module:document/probe.every as every
+ */
+var Document = Base.compose( [Base], /** @lends documents/document# */{
+	declaredClass : "document/document",
+	constructor   : function () {
+		var that = this;
+		probe.mixin( this );
+
+		var idField = "_id";
+		/**
+		 * The name of the field that uniquely identifies a record. When provided, some operations will take advantage of it
+		 *
+		 * @name _idField
+		 * @memberOf  documents/document#
+		 * @type {string}
+		 * @protected
+		 */
+		Object.defineProperty( this, "_idField", {
+			get          : function () {
+				return idField;
+			},
+			set          : function ( val ) {
+				idField = val;
+			},
+			configurable : false,
+			enumerable   : true,
+			writable     : true
+		} );
+
+		/**
+		 * The value of the primary key if {@link documents/document#_idField} is filled in. It will be null if none found
+		 *
+		 * @name _pkey
+		 * @memberOf  documents/document#
+		 * @type {*}
+		 * @protected
+		 */
+		Object.defineProperty( this, "_pkey", {
+			get          : function () {
+				var val;
+				if ( !sys.isEmpty( that._idField ) ) {
+					val = that[that._idField];
+				}
+				return val;
+			},
+			set          : function ( val ) {
+				if ( !sys.isEmpty( that._idField ) ) {
+					that[that._idField] = val;
+				}
+			},
+			configurable : false,
+			enumerable   : true,
+			writable     : true
+		} );
+
+		/**
+		 * If {@link documents/document#_idField} is filled in and it's value is empty this will be true.
+		 * @type {boolean}
+		 * @name isNew
+		 * @memberOf  documents/document#
+		 */
+		Object.defineProperty( this, "isNew", {
+			get          : function () {
+				return !sys.isEmpty( that._idField ) &amp;&amp; !sys.isEmpty( that[that._idField] )
+			},
+			configurable : false,
+			enumerable   : true,
+			writable     : false
+		} );
+
+		/**
+		 * Returns true if this instance is empty
+		 * @type {boolean}
+		 * @name isEmpty
+		 * @memberOf  documents/document#
+		 */
+		Object.defineProperty( this, "isEmpty", {
+			get          : function () {
+				return sys.isEmpty( that );
+			},
+			configurable : false,
+			enumerable   : true,
+			writable     : false
+		} );
+	}
+} );
+module.exports = Document;
+</pre>
+	</article>
+</section>
+
+
+
+
+
+				</div>
+
+				<div class="clearfix"></div>
+				<footer>
+					
+					
+		<span class="copyright">
+		DocStrap Copyright © 2012-2014 The contributors to the JSDoc3 and DocStrap projects.
+		</span>
+					<br />
+					
+		<span class="jsdoc-message">
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a>
+		on Fri Jul 18th 2014 using the <a
+			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		</span>
+				</footer>
+			</div>
+
+			
+			<br clear="both">
+		</div>
+
+	</div>
+	<!--<script src="scripts/sunlight.js"></script>-->
+	<script src="scripts/docstrap.lib.js"></script>
+	<script src="scripts/bootstrap-dropdown.js"></script>
+	<script src="scripts/toc.js"></script>
+
+	<script>
+		$( function () {
+			$( "[id*='$']" ).each( function () {
+				var $this = $( this );
+
+				$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+			} );
+
+			$( "#toc" ).toc( {
+				anchorName  : function ( i, heading, prefix ) {
+					return $( heading ).attr( "id" ) || ( prefix + i );
+				},
+				selectors   : "h1,h2,h3,h4",
+				showAndHide : false,
+				scrollTo    : "100px"
+			} );
+
+			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+			$( '.dropdown-toggle' ).dropdown();
+//			$( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+			$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+				var $this = $( this );
+
+				var example = $this.find( "code" );
+				exampleText = example.html();
+				var lang = /{@lang (.*?)}/.exec( exampleText );
+				if ( lang && lang[1] ) {
+					exampleText = exampleText.replace( lang[0], "" );
+					example.html( exampleText );
+					lang = lang[1];
+				} else {
+					lang = "javascript";
+				}
+
+				if ( lang ) {
+
+					$this
+						.addClass( "sunlight-highlight-" + lang )
+						.addClass( "linenums" )
+						.html( example.html() );
+
+				}
+			} );
+
+			Sunlight.highlightAll( {
+				lineNumbers : true,
+				showMenu : true,
+				enableDoclinks : true
+			} );
+		} );
+	 </script>
+
+
+
+	<!--Navigation and Symbol Display-->
+	
+
+
+	<!--Google Analytics-->
+	
+
+</body>
+</html>

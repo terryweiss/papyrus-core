@@ -8,7 +8,7 @@
 
 var dcl = require( "dcl" );
 var chains = require( "./chains" );
-var logger = require( "../utils/logger" );
+var logger = require( "../utils/logger" ).getLogger("base");
 
 /**
  * @classdesc The base of all classes in the system, this is one of the few pure "classes" in core the of the system. It is a
