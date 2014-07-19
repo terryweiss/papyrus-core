@@ -7,9 +7,9 @@
 		"include" : ["base/", "document/", "events/", "strings/", "utils/"]
 	},
 	"opts"      : {
-		"recurse" : true,
-		"template": "node_modules/ink-docstrap/template",
-		"destination":"docs/"
+		"recurse"     : true,
+		"template"    : "node_modules/ink-docstrap/template",
+		"destination" : "docs/"
 	},
 	"templates" : {
 		"cleverLinks"           : false,
