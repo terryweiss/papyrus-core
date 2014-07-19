@@ -9,3 +9,4 @@ var Eventable = Base.compose( [Base, EventEmitter], {
 		this.trigger = this.emit;
 	}
 } );
+module.exports = Eventable;
