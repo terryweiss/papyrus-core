@@ -36,7 +36,8 @@
     "promise": "^5.0.0",
     "signals": "~1.0.0",
     "sprintf-js": "0.0.7",
-    "log4javascript": "git://github.com/DECK36/log4javascript"
+    "log4javascript": "git://github.com/DECK36/log4javascript",
+    "eventemitter2": "~0.4.14"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

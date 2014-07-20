@@ -4,11 +4,11 @@ var Base = require( "../base/index" );
 var EventEmitter = require( 'eventemitter2' ).EventEmitter2;
 var async = require( "async" );
 var Eventable = Base.compose( [Base, EventEmitter], {
-	declareClass  : "utils/Bussable",
-	constructor   : function () {
+	declareClass : "utils/Bussable",
+	constructor  : function () {
 		this.trigger = this.emit;
 	},
-	fire : function ( event, func ) {
+	fire         : function ( event, func ) {
 		var listeners = this.listeners( event ) || [];
 		var handlers = [];
 		if ( type === 'newListener' && !this.newListener ) {
@@ -35,14 +35,17 @@ var Eventable = Base.compose( [Base, EventEmitter], {
 
 		async.eachSeries( listeners, function ( handler, done ) {
 
-			if (handler.async){
-				handler.apply(null, args.concat([done]));
-			}else{
-				handler.apply(null, args);
+			if ( handler.async ) {
+				handler.apply( null, args.concat( [done] ) );
+			} else {
+				handler.apply( null, args );
 				done();
 			}
 		}, func );
 
+	},
+	destroy      : function () {
+		this.removeAllListeners();
 	}
 } );
 module.exports = Eventable;
