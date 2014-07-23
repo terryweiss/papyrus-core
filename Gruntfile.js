@@ -6,7 +6,7 @@ module.exports = function ( grunt ) {
 			release1 : {
 				command : [
 					"touch Gruntfile.js",
-					"git add . --all",
+					"git add .",
 					'git commit -m "ready for release"'
 				].join( ";" )
 

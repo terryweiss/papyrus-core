@@ -11,7 +11,7 @@ var Eventable = Base.compose( [Base, EventEmitter], {
 	fire         : function ( event, func ) {
 		var listeners = this.listeners( event ) || [];
 		var handlers = [];
-		if ( type === 'newListener' && !this.newListener ) {
+		if ( event === 'newListener' && !this.newListener ) {
 			if ( !this._events.newListener ) { return false; }
 		}
 
@@ -21,12 +21,12 @@ var Eventable = Base.compose( [Base, EventEmitter], {
 
 		if ( this.wildcard ) {
 			handlers = [];
-			var ns = typeof type === 'string' ? type.split( this.delimiter ) : type.slice();
+			var ns = typeof event === 'string' ? event.split( this.delimiter ) : event.slice();
 			searchListenerTree.call( this, handler, ns, this.listenerTree, 0 );
 			listeners = listeners.concat( handler );
 		}
 		else {
-			listeners = this._events[type];
+			listeners = this._events[event];
 		}
 		var args = [];
 		if ( arguments.length > 2 ) {
