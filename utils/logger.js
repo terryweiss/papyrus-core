@@ -123,7 +123,7 @@ var BrowserLog = dcl( [Log], {
 } );
 
 var instance;
-if ( window ) {
+if ( typeof window !== "undefined" ) {
 	instance = new BrowserLog();
 } else {
 	instance = new ServerLog();
