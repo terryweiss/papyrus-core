@@ -114,10 +114,10 @@ var Eventable = Base.compose( [Base, EventEmitter], /** @lends module:events/eve
 	 * Wrap superclass `emit` so that we can handle `on` syntax
 	 */
 	emit                 : dcl.superCall( function ( sup ) {
-		var that = this;
+
 		return function ( event ) {
-			sup.apply( that, arguments );
-			that._processEventMethods( event );
+			sup.apply( this, arguments );
+			this._processEventMethods( event );
 		};
 	} ),
 	/**
