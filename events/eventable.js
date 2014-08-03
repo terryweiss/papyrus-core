@@ -10,7 +10,7 @@ var Base = require( "../base/index" );
 var EventEmitter = require( 'eventemitter2' ).EventEmitter2;
 var async = require( "async" );
 var dcl = require( "dcl" );
-
+var sys = require( "lodash" );
 // split the event name on the :
 var eventMethodSplitter = /(^|:)(\w)/gi;
 // take the event section ("section1:section2:section3")
