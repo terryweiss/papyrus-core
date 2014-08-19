@@ -117,7 +117,7 @@ var Eventable = Base.compose( [Base, EventEmitter], /** @lends module:events/eve
 
 		return function ( event ) {
 			sup.apply( this, arguments );
-			this._processEventMethods( event );
+			this._processEventMethods.apply( this, arguments);
 		};
 	} ),
 	/**
