@@ -1,5 +1,15 @@
 "use strict";
-
+var strRepeat = function ( str, qty ) {
+	if ( qty < 1 ) {return '';}
+	var result = '';
+	while ( qty > 0 ) {
+		//noinspection JSHint
+		if ( qty & 1 ) {result += str;}
+		//noinspection JSHint
+		qty >>= 1, str += str;
+	}
+	return result;
+};
 /**
  * Pads the striong with characters until the total string length is equal to the passed length parameter. By
  * default, pads on the left with the space char (" "). padStr is truncated to a single character if necessary
