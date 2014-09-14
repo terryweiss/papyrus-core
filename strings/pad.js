@@ -52,7 +52,7 @@ module.exports = function ( str, length, padStr, type ) {
  * @returns {string}
  */
 module.exports.lpad = function ( str, length, padStr ) {
-	return module.exports.pad( str, length, padStr );
+	return module.exports( str, length, padStr );
 };
 /**
  * right-pad a string. Alias for pad(str, length, padStr, 'right')
@@ -66,7 +66,7 @@ module.exports.lpad = function ( str, length, padStr ) {
  * @returns {string}
  */
 module.exports.rpad = function ( str, length, padStr ) {
-	return module.exports.pad( str, length, padStr, 'right' );
+	return module.exports( str, length, padStr, 'right' );
 };
 /**
  * left/right-pad a string. Alias for pad(str, length, padStr, 'both')
