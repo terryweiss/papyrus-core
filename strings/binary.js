@@ -9,6 +9,7 @@
  * @author Terry Weiss <me@terryweiss.net>
  * @module ink/strings/binary
  */
+var Buffer = require( "buffer" ).Buffer;
 
 /**
  * The valid set of encoding supported by this library
